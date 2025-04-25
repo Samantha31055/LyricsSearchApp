@@ -111,3 +111,70 @@ function showDataSafe(lyrics) {
         }
       }
     }
+
+    // Get lyrics button click
+result.addEventListener('click', (e) => {
+    const clickedEl = e.target;
+  
+    if (clickedEl.tagName === 'BUTTON') {
+      const artist = clickedEl.getAttribute('data-artist');
+      const songTitle = clickedEl.getAttribute('data-songtitle');
+  
+      // getLyricsUnsafe(artist, songTitle);
+      getLyricsSafe(artist, songTitle);
+    }
+  });
+  
+  // Get lyrics for song
+  async function getLyricsUnsafe(artist, songTitle) {
+    const res = await fetch(`${apiURL}/v1${artist}/${songTitle}`);
+    const data = await res.json();
+  
+    if (data.error) {
+      result.innerHTML = data.error;
+    } else {
+      const lyrics = data.lyrics.replace(/(\r\n|\r|\n)/g, '<br>');
+  
+      result.innerHTML = `
+              <h2><strong>${artist}</strong> - ${songTitle}</h2>
+              <span>${lyrics}</span>
+          `;
+    }
+  
+    more.innerHTML = '';
+  }
+  
+  async function getLyricsSafe(artist, songTitle) {
+    const res = await fetch(`${apiURL}/v1${artist}/${songTitle}`);
+    const data = await res.json();
+  
+    result.innerHTML = '';
+    more.innerHTML = '';
+  
+    if (data.error) {
+      const errorMessage = document.createElement('p');
+      errorMessage.textContent = data.error;
+      result.append(errorMessage);
+      return;
+    }
+  
+    // Create heading
+    const heading = document.createElement('h2');
+    const strong = document.createElement('strong');
+    strong.textContent = artist;
+  
+    heading.append(strong, ` - ${songTitle}`);
+    result.append(heading);
+  
+    // Create lyrics block with line breaks
+    const span = document.createElement('span');
+    const lines = data.lyrics.split(/\r\n|\r|\n/);
+    lines.forEach((line, index) => {
+      span.append(line);
+      if (index < lines.length - 1) {
+        span.append(document.createElement('br'));
+      }
+    });
+  
+    result.append(span);
+  }
