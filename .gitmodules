@@ -1,0 +1,3 @@
+[submodule "Lyrics-Search-App"]
+	path = Lyrics-Search-App
+	url = https://github.com/yourusername/Lyrics-Search-App.git
