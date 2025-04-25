@@ -8,7 +8,7 @@ const apiURL = 'https://api.lyrics.ovh';
 
 // Search by song or artist
 async function searchSongs(term) {
-  const res = await fetch(`${apiURL}/suggest${term}`);
+  const res = await fetch(`${apiURL}/suggest/${term}`);
   const data = await res.json();
 
   showDataSafe(data);
@@ -44,21 +44,27 @@ function showDataUnsafe(lyrics) {
   `;
 
   if (lyrics.prev || lyrics.next) {
-    more.innerHTML = `
-      ${
-        lyrics.prev
-          ? `<button class="btn" onclick="getMoreSongs('${lyrics.prev}')">Prev</button>`
-          : ''
-      }
-      ${
-        lyrics.next
-          ? `<button class="btn" onclick="getMoreSongs('${lyrics.next}')">Next</button>`
-          : ''
-      }
-    `;
+    more.innerHTML = ''; // Clear existing buttons
+  
+    if (lyrics.prev) {
+      const prevButton = document.createElement('button');
+      prevButton.className = 'btn';
+      prevButton.textContent = 'Prev';
+      prevButton.addEventListener('click', () => getMoreSongs(lyrics.prev));  // Use addEventListener
+      more.appendChild(prevButton);
+    }
+  
+    if (lyrics.next) {
+      const nextButton = document.createElement('button');
+      nextButton.className = 'btn';
+      nextButton.textContent = 'Next';
+      nextButton.addEventListener('click', () => getMoreSongs(lyrics.next));  // Use addEventListener
+      more.appendChild(nextButton);
+    }
   } else {
     more.innerHTML = '';
   }
+  
 }
 
 
@@ -127,7 +133,7 @@ result.addEventListener('click', (e) => {
   
   // Get lyrics for song
   async function getLyricsUnsafe(artist, songTitle) {
-    const res = await fetch(`${apiURL}/v1${artist}/${songTitle}`);
+    const res = await await fetch(`https://api.lyrics.ovh/v1/${artist}/${songTitle}`);
     const data = await res.json();
   
     if (data.error) {
